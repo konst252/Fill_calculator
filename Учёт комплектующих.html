@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <title>Учёт комплектующих</title>
+    <meta name="theme-color" content="#059669">
+    
+    <!-- Вшитая иконка (формат Base64 SVG - зеленый квадрат с коробкой) -->
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExNSIgZmlsbD0iIzA1OTY2OSIvPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0zNzEuMSAyMDAuN2wtOTYtNjRjLTUuNi0zLjctMTIuNi0zLjctMTguMiAwbC05NiA2NGMtNi4xIDQuMS05LjkgMTAuOS05LjkgMTguM3YxMTZjMCA3LjQgMy44IDE0LjIgOS45IDE4LjNsOTYgNjRjMi44IDEuOSA2IDIuOCA5LjEgMi44czYuMy0wLjkgOS4xLTIuOGw5Ni02NGM2LjEtNC4xIDkuOS0xMC45IDkuOS0xOC4zdi0xMTZjMC03LjQtMy44LTE0LjItOS45LTE4LjN6bS0xMTUuMS00MGw3MC41IDQ3LTcwLjUgNDctNzAuNS00NyA3MC41LTQ3em0tODAgMTY1Ljd2LTc5LjRsNzAgNDYuN3Y3OS40bC03MC00Ni43em0xNjAgMGwtNzAgNDYuN3YtNzkuNGw3MC00Ni43djc5LjR6Ii8+PC9zdmc+">
+    
+    <!-- Для устройств Apple (iOS) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExNSIgZmlsbD0iIzA1OTY2OSIvPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0zNzEuMSAyMDAuN2wtOTYtNjRjLTUuNi0zLjctMTIuNi0zLjctMTguMiAwbC05NiA2NGMtNi4xIDQuMS05LjkgMTAuOS05LjkgMTguM3YxMTZjMCA3LjQgMy44IDE0LjIgOS45IDE4LjNsOTYgNjRjMi44IDEuOSA2IDIuOCA5LjEgMi44czYuMy0wLjkgOS4xLTIuOGw5Ni02NGM2LjEtNC4xIDkuOS0xMC45IDkuOS0xOC4zdi0xMTZjMC03LjQtMy44LTE0LjItOS45LTE4LjN6bS0xMTUuMS00MGw3MC41IDQ3LTcwLjUgNDctNzAuNS00NyA3MC41LTQ3em0tODAgMTY1Ljd2LTc5LjRsNzAgNDYuN3Y3OS40bC03MC00Ni43em0xNjAgMGwtNzAgNDYuN3YtNzkuNGw3MC00Ni43djc5LjR6Ii8+PC9zdmc+">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Склад">
+    
+    <!-- Вшитый манифест для Android и установки на ПК -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Учёт комплектующих","short_name":"Склад","display":"standalone","background_color":"#f8fafc","theme_color":"#059669","icons":[{"src":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExNSIgZmlsbD0iIzA1OTY2OSIvPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0zNzEuMSAyMDAuN2wtOTYtNjRjLTUuNi0zLjctMTIuNi0zLjctMTguMiAwbC05NiA2NGMtNi4xIDQuMS05LjkgMTAuOS05LjkgMTguM3YxMTZjMCA3LjQgMy44IDE0LjIgOS45IDE4LjNsOTYgNjRjMi44IDEuOSA2IDIuOCA5LjEgMi44czYuMy0wLjkgOS4xLTIuOGw5Ni02NGM2LjEtNC4xIDkuOS0xMC45IDkuOS0xOC4zdi0xMTZjMC03LjQtMy44LTE0LjItOS45LTE4LjN6bS0xMTUuMS00MGw3MC41IDQ3LTcwLjUgNDctNzAuNS00NyA3MC41LTQ3em0tODAgMTY1Ljd2LTc5LjRsNzAgNDYuN3Y3OS40bC03MC00Ni43em0xNjAgMGwtNzAgNDYuN3YtNzkuNGw3MC00Ni43djc5LjR6Ii8+PC9zdmc+","sizes":"512x512","type":"image/svg+xml"}]}'>
+    
+    <!-- Подключаем Tailwind CSS для стилей -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Подключаем иконки Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        .hide-scrollbars::-webkit-scrollbar { display: none; }
+        .hide-scrollbars { -ms-overflow-style: none; scrollbar-width: none; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans pb-24 md:pb-8 selection:bg-emerald-200 min-h-screen flex flex-col">
+
+    <!-- Шапка -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center gap-3">
+            <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white shadow-sm">
+                <i class="ph-bold ph-package text-xl"></i>
+            </div>
+            <h1 class="text-xl font-bold text-slate-800">Учёт комплектующих</h1>
+        </div>
+    </header>
+
+    <!-- Основной контент (Контейнеры вкладок) -->
+    <main class="max-w-6xl mx-auto px-4 py-6 md:py-8 w-full flex-1">
+        <section id="tab-home" class="tab-content"></section>
+        <section id="tab-parts" class="tab-content hidden"></section>
+        <section id="tab-purchases" class="tab-content hidden"></section>
+        <section id="tab-sets" class="tab-content hidden"></section>
+        <section id="tab-builds" class="tab-content hidden"></section>
+        <section id="tab-history" class="tab-content hidden"></section>
+        <section id="tab-settings" class="tab-content hidden"></section>
+    </main>
+
+    <!-- Нижняя навигация -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 pb-safe md:relative md:bg-transparent md:border-0 md:pb-0 z-40">
+        <div class="max-w-6xl mx-auto px-2 py-2 flex overflow-x-auto gap-1 hide-scrollbars md:justify-center" id="main-nav">
+            <!-- Кнопки навигации генерируются в JS -->
+        </div>
+    </nav>
+
+    <!-- Уведомления (Toast) -->
+    <div id="toast-container" class="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 hidden">
+        <div class="bg-slate-800 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 font-medium">
+            <i class="ph-bold ph-check text-emerald-400 text-lg"></i>
+            <span id="toast-message">Успешно!</span>
+        </div>
+    </div>
+
+    <!-- Модальное окно (Универсальное) -->
+    <div id="modal-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto flex flex-col">
+            <div class="sticky top-0 bg-white/90 backdrop-blur pb-2 pt-5 px-6 border-b border-slate-100 flex justify-between items-center z-10">
+                <h3 id="modal-title" class="text-xl font-bold text-slate-800">Заголовок</h3>
+                <button onclick="closeModal()" class="p-2 hover:bg-slate-100 rounded-full text-slate-500 transition-colors">
+                    <i class="ph-bold ph-x text-lg"></i>
+                </button>
+            </div>
+            <div id="modal-body" class="p-6">
+                <!-- Контент модального окна -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно (Подтверждение) -->
+    <div id="confirm-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[60] hidden animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
+                    <i class="ph-bold ph-warning text-2xl"></i>
+                </div>
+                <h3 id="confirm-title" class="text-lg font-bold text-slate-800 mb-2">Подтвердите действие</h3>
+                <p id="confirm-message" class="text-sm text-slate-500 mb-6">Вы уверены?</p>
+                <div class="flex gap-3">
+                    <button onclick="closeConfirm(false)" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors">Отмена</button>
+                    <button id="confirm-btn-yes" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-colors">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'pinata_stock_app_v2';
+        
+        let data = { parts: [], sets: [], history: [] };
+        let activeTab = 'home';
+        let searchQuery = '';
+        let historyFilter = 'all';
+
+        const generateId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+        const getToday = () => new Date().toISOString().slice(0, 10);
+        const parseNum = (v) => Number(v) || 0;
+        const formatMoney = (v) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(parseNum(v));
+        const formatQty = (v) => new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 3 }).format(parseNum(v));
+        const escapeHTML = (str) => String(str ?? '').replace(/[&<>"']/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[match]));
+
+        const getPart = (id) => data.parts.find(p => p.id === id);
+        const getUnitCost = (p) => p && parseNum(p.stock) > 0 ? parseNum(p.value) / parseNum(p.stock) : parseNum(p?.cost);
+        const getRecipeCost = (setObj) => (setObj?.items || []).reduce((sum, item) => sum + parseNum(item.qty) * getUnitCost(getPart(item.partId)), 0);
+        
+        const checkAvailability = (setObj, buildQty = 1) => {
+            if (!setObj || !setObj.items) return [];
+            return setObj.items.map(it => {
+                const p = getPart(it.partId);
+                const needed = parseNum(it.qty) * buildQty;
+                const have = parseNum(p?.stock);
+                return { part: p, needed, have, isOk: !!p && (have + 1e-9 >= needed) };
+            });
+        };
+
+        function loadData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    data = {
+                        parts: Array.isArray(parsed.parts) ? parsed.parts : [],
+                        sets: Array.isArray(parsed.sets) ? parsed.sets : [],
+                        history: Array.isArray(parsed.history) ? parsed.history : []
+                    };
+                }
+            } catch (e) {
+                console.error('Ошибка загрузки', e);
+            }
+        }
+
+        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+        let toastTimeout;
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            document.getElementById('toast-message').textContent = message;
+            container.classList.remove('hidden');
+            container.classList.add('animate-fade-in-up');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => container.classList.add('hidden'), 3000);
+        }
+
+        function openModal(title, htmlContent) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-body').innerHTML = htmlContent;
+            document.getElementById('modal-overlay').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.add('hidden');
+            document.getElementById('modal-body').innerHTML = '';
+        }
+
+        let confirmCallback = null;
+        function showConfirm(title, message, callback) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            confirmCallback = callback;
+            document.getElementById('confirm-overlay').classList.remove('hidden');
+            document.getElementById('confirm-btn-yes').onclick = () => closeConfirm(true);
+        }
+
+        function closeConfirm(result) {
+            document.getElementById('confirm-overlay').classList.add('hidden');
+            if (result && confirmCallback) confirmCallback();
+            confirmCallback = null;
+        }
+
+        const TABS = [
+            { id: 'home', icon: 'ph-trend-up', label: 'Обзор' },
+            { id: 'parts', icon: 'ph-box-cube', label: 'Склад' },
+            { id: 'purchases', icon: 'ph-shopping-cart', label: 'Поступления' },
+            { id: 'sets', icon: 'ph-package', label: 'Рецептуры' },
+            { id: 'builds', icon: 'ph-wrench', label: 'Сборка' },
+            { id: 'history', icon: 'ph-clock-counter-clockwise', label: 'История' },
+            { id: 'settings', icon: 'ph-gear', label: 'Данные' }
+        ];
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            const nav = document.getElementById('main-nav');
+            nav.innerHTML = TABS.map(tab => {
+                const isActive = activeTab === tab.id;
+                return `
+                    <button onclick="switchTab('${tab.id}')" class="flex flex-col md:flex-row items-center gap-1 md:gap-2 px-3 py-2 md:px-5 md:py-3 rounded-xl min-w-[72px] md:min-w-0 transition-all ${isActive ? 'text-emerald-700 bg-emerald-50 font-bold' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800 font-medium'}">
+                        <i class="ph-bold ${tab.icon} ${isActive ? 'text-[22px]' : 'text-[20px]'}"></i>
+                        <span class="text-[10px] md:text-sm">${tab.label}</span>
+                    </button>
+                `;
+            }).join('');
+
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            window.scrollTo(0, 0);
+            renderApp();
+        }
+
+        function renderApp() {
+            if (activeTab === 'home') renderDashboard();
+            if (activeTab === 'parts') renderParts();
+            if (activeTab === 'purchases') renderPurchases();
+            if (activeTab === 'sets') renderSets();
+            if (activeTab === 'builds') renderBuilds();
+            if (activeTab === 'history') renderHistory();
+            if (activeTab === 'settings') renderSettings();
+        }
+
+        function renderDashboard() {
+            const totalValue = data.parts.reduce((sum, p) => sum + parseNum(p.value), 0);
+            const lowStockParts = data.parts.filter(p => parseNum(p.stock) <= parseNum(p.minStock));
+            const buildsCount = data.history.filter(h => h.type === 'build').length;
+
+            let html = `
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                            <div class="flex items-center gap-3 text-emerald-600 mb-2">
+                                <div class="p-2 bg-emerald-50 rounded-lg"><i class="ph-bold ph-box-cube text-xl"></i></div>
+                                <span class="font-semibold">Комплектующих</span>
+                            </div>
+                            <div class="text-3xl font-bold text-slate-800">${data.parts.length}</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                            <div class="flex items-center gap-3 text-blue-600 mb-2">
+                                <div class="p-2 bg-blue-50 rounded-lg"><i class="ph-bold ph-currency-ruble text-xl"></i></div>
+                                <span class="font-semibold">Сумма на складе</span>
+                            </div>
+                            <div class="text-3xl font-bold text-slate-800">${formatMoney(totalValue)}</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                            <div class="flex items-center gap-3 text-purple-600 mb-2">
+                                <div class="p-2 bg-purple-50 rounded-lg"><i class="ph-bold ph-package text-xl"></i></div>
+                                <span class="font-semibold">Рецептур</span>
+                            </div>
+                            <div class="text-3xl font-bold text-slate-800">${data.sets.length}</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                            <div class="flex items-center gap-3 text-orange-600 mb-2">
+                                <div class="p-2 bg-orange-50 rounded-lg"><i class="ph-bold ph-wrench text-xl"></i></div>
+                                <span class="font-semibold">Сборок</span>
+                            </div>
+                            <div class="text-3xl font-bold text-slate-800">${buildsCount}</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i class="ph-fill ph-warning-circle text-amber-500 text-xl"></i>
+                                Требуют внимания (мало на складе)
+                            </h2>
+                            <button onclick="switchTab('parts')" class="text-sm text-emerald-600 font-semibold hover:underline">Все комплектующие →</button>
+                        </div>
+            `;
+
+            if (lowStockParts.length === 0) {
+                html += `<div class="text-center py-8 text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">Всё в порядке! Нет комплектующих с критическим остатком.</div>`;
+            } else {
+                html += `<div class="grid gap-3">`;
+                lowStockParts.forEach(p => {
+                    const percent = p.minStock > 0 ? Math.min(100, (p.stock / p.minStock) * 100) : 0;
+                    const isZero = p.stock <= 0;
+                    html += `
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <div class="flex-1 mr-4">
+                                <div class="font-semibold text-slate-800">${escapeHTML(p.name)}</div>
+                                <div class="text-sm text-slate-500 mb-2">Остаток: ${formatQty(p.stock)} ${escapeHTML(p.unit)} (Мин: ${formatQty(p.minStock)})</div>
+                                <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full ${isZero ? 'bg-red-500' : 'bg-amber-500'}" style="width: ${percent}%"></div>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${isZero ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}">${isZero ? 'Нет в наличии' : 'Заканчивается'}</span>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            html += `</div></div>`;
+            document.getElementById('tab-home').innerHTML = html;
+        }
+
+        let currentEditingPart = null;
+
+        function renderParts() {
+            const filtered = data.parts.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+            
+            let html = `
+                <div class="space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="relative flex-1 w-full max-w-md">
+                            <input type="text" id="parts-search" placeholder="Поиск комплектующих..." class="w-full pl-4 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" value="${escapeHTML(searchQuery)}">
+                        </div>
+                        <button onclick="openPartForm()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-sm shadow-emerald-600/20 transition-all">
+                            <i class="ph-bold ph-plus text-lg"></i> Добавить деталь
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            `;
+
+            if (filtered.length === 0) {
+                html += `<div class="col-span-full py-12 text-center text-slate-500 bg-white rounded-2xl border border-dashed border-slate-200">${searchQuery ? 'Ничего не найдено по запросу.' : 'Список комплектующих пуст. Добавьте первую деталь.'}</div>`;
+            } else {
+                filtered.forEach(p => {
+                    const isZero = p.stock === 0;
+                    const badgeClass = isZero ? 'bg-red-100 text-red-700' : (p.stock <= p.minStock ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700');
+                    html += `
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-200 transition-colors flex flex-col">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="font-bold text-slate-800 text-lg leading-tight pr-4">${escapeHTML(p.name)}</h3>
+                                <span class="px-2.5 py-1 text-xs font-bold rounded-lg whitespace-nowrap ${badgeClass}">${formatQty(p.stock)} ${escapeHTML(p.unit)}</span>
+                            </div>
+                            <div class="text-sm text-slate-500 space-y-1 mb-4 flex-1">
+                                <div class="flex justify-between"><span>Средняя цена:</span> <span class="font-medium text-slate-700">${formatMoney(getUnitCost(p))}</span></div>
+                                <div class="flex justify-between"><span>Стоимость остатка:</span> <span class="font-medium text-slate-700">${formatMoney(p.value)}</span></div>
+                                ${p.note ? `<div class="mt-2 text-xs italic bg-slate-50 p-2 rounded-lg">${escapeHTML(p.note)}</div>` : ''}
+                            </div>
+                            <div class="flex gap-2 mt-auto pt-4 border-t border-slate-100">
+                                <button onclick="openPartForm('${p.id}')" class="flex-1 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium rounded-xl text-sm transition-colors flex justify-center items-center gap-1"><i class="ph-bold ph-pencil-simple text-sm"></i> Изменить</button>
+                                <button onclick="deletePart('${p.id}')" class="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition-colors"><i class="ph-bold ph-trash text-base"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `</div></div>`;
+            document.getElementById('tab-parts').innerHTML = html;
+            document.getElementById('parts-search')?.addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                renderParts();
+                const input = document.getElementById('parts-search');
+                input.focus();
+                input.setSelectionRange(input.value.length, input.value.length);
+            });
+        }
+
+        function openPartForm(id = null) {
+            currentEditingPart = id ? getPart(id) : null;
+            const p = currentEditingPart;
+            const unitOptions = ['шт.', 'упак.', 'г', 'кг', 'м', 'см', 'пара', 'набор'].map(u => `<option value="${u}" ${p && p.unit === u ? 'selected' : ''}>${u}</option>`).join('');
+
+            let html = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Название *</label>
+                        <input type="text" id="frm-p-name" value="${escapeHTML(p?.name || '')}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Ед. измерения</label>
+                            <select id="frm-p-unit" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 outline-none">${unitOptions}</select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Мин. остаток</label>
+                            <input type="number" id="frm-p-min" min="0" value="${p?.minStock || 0}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 outline-none">
+                        </div>
+                    </div>
+            `;
+
+            if (!p) {
+                html += `
+                    <div class="grid grid-cols-2 gap-4 bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
+                        <div><label class="block text-sm font-semibold text-emerald-800 mb-1">Нач. остаток</label><input type="number" id="frm-p-stock" min="0" value="0" class="w-full p-3 bg-white border border-emerald-200 rounded-xl outline-none focus:border-emerald-500"></div>
+                        <div><label class="block text-sm font-semibold text-emerald-800 mb-1">Цена за ед., ₽</label><input type="number" id="frm-p-cost" min="0" value="0" class="w-full p-3 bg-white border border-emerald-200 rounded-xl outline-none focus:border-emerald-500"></div>
+                    </div>
+                `;
+            } else {
+                html += `<div class="bg-blue-50 p-3 rounded-xl border border-blue-100 text-sm text-blue-800 flex items-start gap-2"><i class="ph-bold ph-info text-base mt-0.5 shrink-0"></i><span>Чтобы изменить остаток, проведите Закупку или Сборку. Это сохранит правильную историю себестоимости.</span></div>`;
+            }
+
+            html += `
+                    <div><label class="block text-sm font-semibold text-slate-700 mb-1">Комментарий</label><input type="text" id="frm-p-note" value="${escapeHTML(p?.note || '')}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 outline-none"></div>
+                    <button onclick="savePart()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-lg shadow-sm transition-colors mt-2">Сохранить</button>
+                </div>
+            `;
+            openModal(p ? 'Редактировать деталь' : 'Новая деталь', html);
+        }
+
+        function savePart() {
+            const name = document.getElementById('frm-p-name').value.trim();
+            if (!name) return showToast('Введите название');
+            if (data.parts.some(p => p.name.toLowerCase() === name.toLowerCase() && p.id !== currentEditingPart?.id)) return showToast('Деталь с таким названием уже есть');
+
+            if (currentEditingPart) {
+                const index = data.parts.findIndex(p => p.id === currentEditingPart.id);
+                data.parts[index] = { ...data.parts[index], name, unit: document.getElementById('frm-p-unit').value, minStock: parseNum(document.getElementById('frm-p-min').value), note: document.getElementById('frm-p-note').value.trim() };
+                showToast('Сохранено');
+            } else {
+                const stock = parseNum(document.getElementById('frm-p-stock').value), cost = parseNum(document.getElementById('frm-p-cost').value);
+                data.parts.push({ id: generateId(), name, unit: document.getElementById('frm-p-unit').value, stock: Math.max(0, stock), value: Math.max(0, stock) * Math.max(0, cost), cost: Math.max(0, cost), minStock: Math.max(0, parseNum(document.getElementById('frm-p-min').value)), note: document.getElementById('frm-p-note').value.trim(), createdAt: new Date().toISOString() });
+                showToast('Добавлено');
+            }
+            saveData(); renderParts(); closeModal();
+        }
+
+        function deletePart(id) {
+            if (data.sets.some(s => s.items.some(i => i.partId === id))) return showToast('Нельзя удалить: используется в рецептуре набора!');
+            showConfirm('Удаление детали', 'Удалить эту деталь?', () => { data.parts = data.parts.filter(p => p.id !== id); saveData(); renderParts(); showToast('Удалено'); });
+        }
+
+        function renderPurchases() {
+            const options = data.parts.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(p => `<option value="${p.id}">${escapeHTML(p.name)} (Остаток: ${formatQty(p.stock)} ${escapeHTML(p.unit)})</option>`).join('');
+            document.getElementById('tab-purchases').innerHTML = `
+                <div class="max-w-2xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="bg-emerald-600 p-6 text-white"><h2 class="text-2xl font-bold flex items-center gap-2"><i class="ph-bold ph-shopping-cart"></i> Оформить закупку</h2></div>
+                    <div class="p-6 space-y-5">
+                        <div><label class="block text-sm font-semibold text-slate-700 mb-1">Комплектующее *</label><select id="pur-part" onchange="updatePurchasePreview()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 font-medium text-slate-800"><option value="">-- Выберите --</option>${options}</select></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-semibold text-slate-700 mb-1">Количество</label><input type="number" id="pur-qty" min="0.001" step="any" oninput="updatePurchasePreview()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20" placeholder="0"></div>
+                            <div><label class="block text-sm font-semibold text-slate-700 mb-1">Цена за ед., ₽</label><input type="number" id="pur-price" min="0" step="any" oninput="updatePurchasePreview()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20" placeholder="0.00"></div>
+                        </div>
+                        <div><label class="block text-sm font-semibold text-slate-700 mb-1">Дата закупки</label><input type="date" id="pur-date" value="${getToday()}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-700"></div>
+                        <div id="pur-preview-container" class="hidden bg-blue-50/50 p-5 rounded-2xl border border-blue-100 flex flex-col gap-2">
+                            <div class="flex justify-between items-center text-slate-600">Сумма закупки: <span id="pur-prev-total" class="font-bold text-lg text-slate-900"></span></div>
+                            <div class="flex justify-between items-center text-slate-600">Будет на складе: <span id="pur-prev-stock" class="font-bold text-slate-900"></span></div>
+                            <div class="flex justify-between items-center text-slate-600 pt-2 border-t border-blue-100/50">Новая средняя цена: <span id="pur-prev-avg" class="font-bold text-blue-700"></span></div>
+                        </div>
+                        <button onclick="doPurchase()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-lg shadow-sm transition-colors mt-4">Провести поступление</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updatePurchasePreview() {
+            const p = getPart(document.getElementById('pur-part').value), qty = parseNum(document.getElementById('pur-qty').value), price = parseNum(document.getElementById('pur-price').value), container = document.getElementById('pur-preview-container');
+            if (p && qty > 0 && price > 0) {
+                const total = qty * price, newStock = parseNum(p.stock) + qty;
+                document.getElementById('pur-prev-total').textContent = formatMoney(total);
+                document.getElementById('pur-prev-stock').textContent = `${formatQty(newStock)} ${p.unit}`;
+                document.getElementById('pur-prev-avg').textContent = formatMoney(newStock > 0 ? (parseNum(p.value) + total) / newStock : 0);
+                container.classList.remove('hidden');
+            } else { container.classList.add('hidden'); }
+        }
+
+        function doPurchase() {
+            const p = getPart(document.getElementById('pur-part').value);
+            if (!p) return showToast('Выберите деталь');
+            const qty = parseNum(document.getElementById('pur-qty').value), price = parseNum(document.getElementById('pur-price').value);
+            if (qty <= 0 || price <= 0) return showToast('Укажите корректное количество и цену');
+            const total = qty * price, oldStock = parseNum(p.stock), oldValue = parseNum(p.value), newStock = oldStock + qty, avgCostAfter = newStock > 0 ? (oldValue + total) / newStock : price;
+            data.history.unshift({ id: generateId(), type: 'purchase', date: document.getElementById('pur-date').value || getToday(), partId: p.id, partName: p.name, qty, price, total, oldStock, newStock, avgCostAfter, createdAt: new Date().toISOString() });
+            const pIndex = data.parts.findIndex(x => x.id === p.id);
+            data.parts[pIndex] = { ...p, stock: newStock, value: oldValue + total, cost: avgCostAfter };
+            saveData(); renderPurchases(); showToast('Закупка проведена успешно');
+        }
+
+        let currentSetItems = [], currentEditingSetId = null;
+
+        function renderSets() {
+            let html = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                        <h2 class="text-xl font-bold text-slate-800">Рецептуры наборов</h2>
+                        <button onclick="openSetForm()" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-sm transition-all"><i class="ph-bold ph-plus text-lg"></i> Создать набор</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            `;
+            if (data.sets.length === 0) {
+                html += `<div class="col-span-full py-12 text-center text-slate-500 bg-white rounded-2xl border border-dashed border-slate-200">Рецептур пока нет.</div>`;
+            } else {
+                data.sets.forEach(s => {
+                    const avail = checkAvailability(s, 1), maxBuilds = avail.length > 0 ? Math.min(...avail.map(x => x.part ? Math.floor((x.have + 1e-9) / (parseNum(s.items.find(i=>i.partId===x.part.id)?.qty) || 1)) : 0)) : 0;
+                    html += `
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-2 h-full ${maxBuilds > 0 ? 'bg-purple-500' : 'bg-slate-300'}"></div>
+                            <div class="pl-4">
+                                <div class="flex justify-between items-start mb-4"><h3 class="font-bold text-slate-800 text-xl">${escapeHTML(s.name)}</h3><div class="text-right"><div class="font-bold text-purple-700 text-lg">${formatMoney(getRecipeCost(s))}</div><div class="text-xs text-slate-400">себестоимость</div></div></div>
+                                <div class="bg-slate-50 p-3 rounded-xl mb-4 border border-slate-100 space-y-1">${s.items.map(it => { const p = getPart(it.partId); return `<div class="flex justify-between text-sm"><span class="text-slate-600">${escapeHTML(p?.name || 'Удаленный')}</span><span class="font-medium text-slate-800">${formatQty(it.qty)} ${escapeHTML(p?.unit || '')}</span></div>`; }).join('')}</div>
+                                <div class="flex items-center justify-between mt-auto">
+                                    <span class="px-3 py-1 text-xs font-bold rounded-full ${maxBuilds > 0 ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}">Можно собрать: ${Math.max(0, maxBuilds)} шт.</span>
+                                    <div class="flex gap-2"><button onclick="openSetForm('${s.id}')" class="p-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg"><i class="ph-bold ph-pencil-simple text-lg"></i></button><button onclick="deleteSet('${s.id}')" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><i class="ph-bold ph-trash text-lg"></i></button></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            html += `</div></div>`; document.getElementById('tab-sets').innerHTML = html;
+        }
+
+        function openSetForm(id = null) {
+            currentEditingSetId = id; const setObj = id ? data.sets.find(s => s.id === id) : null;
+            currentSetItems = setObj && setObj.items.length > 0 ? JSON.parse(JSON.stringify(setObj.items)) : [{ partId: '', qty: 1 }];
+            openModal(id ? 'Редактировать набор' : 'Новый набор', `
+                <div class="space-y-5">
+                    <div><label class="block text-sm font-semibold text-slate-700 mb-1">Название *</label><input type="text" id="frm-s-name" value="${escapeHTML(setObj?.name || '')}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" placeholder="Название набора"></div>
+                    <div>
+                        <div class="flex justify-between items-end mb-2"><label class="block text-sm font-semibold text-slate-700">Состав на 1 набор</label><button onclick="addSetItem()" class="text-sm text-purple-600 font-bold hover:underline flex items-center gap-1"><i class="ph-bold ph-plus"></i> Добавить строку</button></div>
+                        <div id="set-items-container" class="space-y-2"></div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 flex justify-between items-center"><span class="text-purple-800 font-medium text-sm">Оценочная себестоимость:</span><span id="set-preview-cost" class="text-lg font-bold text-purple-900">0.00 ₽</span></div>
+                    <button onclick="saveSet()" class="w-full py-3.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-lg shadow-sm">Сохранить рецептуру</button>
+                </div>
+            `);
+            renderSetItems();
+        }
+
+        function renderSetItems() {
+            document.getElementById('set-items-container').innerHTML = currentSetItems.map((it, idx) => `
+                <div class="flex gap-2 items-center">
+                    <select onchange="updateSetItem(${idx}, 'partId', this.value)" class="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm"><option value="">Выберите деталь...</option>${data.parts.map(p => `<option value="${p.id}" ${p.id === it.partId ? 'selected' : ''}>${escapeHTML(p.name)}</option>`).join('')}</select>
+                    <input type="number" min="0.001" step="any" value="${it.qty}" oninput="updateSetItem(${idx}, 'qty', this.value)" class="w-24 p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm" placeholder="Кол-во">
+                    <button onclick="removeSetItem(${idx})" class="p-2 text-slate-400 hover:text-red-500"><i class="ph-bold ph-x text-lg"></i></button>
+                </div>
+            `).join('');
+            document.getElementById('set-preview-cost').textContent = formatMoney(currentSetItems.reduce((sum, it) => sum + parseNum(it.qty) * getUnitCost(getPart(it.partId)), 0));
+        }
+
+        function addSetItem() { currentSetItems.push({ partId: '', qty: 1 }); renderSetItems(); }
+        function updateSetItem(index, field, val) { currentSetItems[index][field] = val; renderSetItems(); }
+        function removeSetItem(index) { currentSetItems.splice(index, 1); renderSetItems(); }
+
+        function saveSet() {
+            const name = document.getElementById('frm-s-name').value.trim(); if (!name) return showToast('Введите название');
+            const validItems = currentSetItems.filter(i => i.partId && parseNum(i.qty) > 0); if (validItems.length === 0) return showToast('Добавьте компоненты');
+            const seen = new Set(); for (const it of validItems) { if (seen.has(it.partId)) return showToast('Компонент добавлен дважды'); seen.add(it.partId); }
+            const newSet = { id: currentEditingSetId || generateId(), name, items: validItems, createdAt: currentEditingSetId ? data.sets.find(s => s.id === currentEditingSetId).createdAt : new Date().toISOString() };
+            if (currentEditingSetId) data.sets[data.sets.findIndex(s => s.id === currentEditingSetId)] = newSet; else data.sets.push(newSet);
+            saveData(); renderSets(); closeModal(); showToast('Рецептура сохранена');
+        }
+
+        function deleteSet(id) { showConfirm('Удаление набора', 'Удалить рецептуру?', () => { data.sets = data.sets.filter(s => s.id !== id); saveData(); renderSets(); showToast('Удален'); }); }
+
+        function renderBuilds() {
+            document.getElementById('tab-builds').innerHTML = `
+                <div class="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="bg-orange-500 p-6 text-white"><h2 class="text-2xl font-bold flex items-center gap-2"><i class="ph-bold ph-wrench"></i> Собрать наборы</h2></div>
+                    <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8">
+                        <div class="flex-1 space-y-5">
+                            <div><label class="block text-sm font-semibold text-slate-700 mb-1">Какой набор собираем?</label><select id="build-set" onchange="updateBuildPreview()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"><option value="">-- Выберите --</option>${data.sets.map(s => `<option value="${s.id}">${escapeHTML(s.name)}</option>`).join('')}</select></div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-sm font-semibold text-slate-700 mb-1">Количество</label><input type="number" id="build-qty" min="1" step="1" value="1" oninput="updateBuildPreview()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-center font-bold text-lg"></div>
+                                <div><label class="block text-sm font-semibold text-slate-700 mb-1">Дата сборки</label><input type="date" id="build-date" value="${getToday()}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"></div>
+                            </div>
+                            <button id="build-btn" onclick="doBuild()" disabled class="w-full py-4 rounded-xl font-bold text-lg shadow-sm transition-all mt-4 flex justify-center items-center gap-2 bg-slate-200 text-slate-400 cursor-not-allowed"><i class="ph-bold ph-check text-2xl"></i> Подтвердить сборку</button>
+                        </div>
+                        <div class="flex-1 bg-slate-50 rounded-2xl p-5 border border-slate-100 flex flex-col" id="build-preview-container"><h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="ph-bold ph-info text-slate-400 text-lg"></i> Проверка остатков</h3><div class="text-slate-400 text-sm text-center my-auto">Выберите набор слева.</div></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateBuildPreview() {
+            const setObj = data.sets.find(s => s.id === document.getElementById('build-set').value), qty = Math.max(1, Math.floor(parseNum(document.getElementById('build-qty').value))), container = document.getElementById('build-preview-container'), btn = document.getElementById('build-btn');
+            if (!setObj) { container.innerHTML = `<h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="ph-bold ph-info text-slate-400 text-lg"></i> Проверка остатков</h3><div class="text-slate-400 text-sm text-center my-auto">Выберите набор слева.</div>`; btn.disabled = true; btn.className = "w-full py-4 rounded-xl font-bold text-lg shadow-sm bg-slate-200 text-slate-400 cursor-not-allowed"; return; }
+            const availability = checkAvailability(setObj, qty), canBuild = availability.length > 0 && availability.every(i => i.isOk), costPerSet = getRecipeCost(setObj);
+            container.innerHTML = `<h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="ph-bold ph-info text-slate-400 text-lg"></i> Проверка остатков</h3><div class="space-y-4 flex-1"><div class="space-y-2">${availability.map(req => `<div class="flex justify-between items-center text-sm bg-white p-3 rounded-lg border border-slate-100"><div class="flex-1"><div class="font-medium text-slate-800">${escapeHTML(req.part?.name || 'Неизвестно')}</div><div class="text-xs text-slate-500">Надо: ${formatQty(req.needed)} / Есть: ${formatQty(req.have)}</div></div><div class="ml-2 flex-shrink-0 ${req.isOk ? 'text-emerald-500' : 'text-red-500 font-bold bg-red-50 px-2 py-1 rounded-md'}">${req.isOk ? '<i class="ph-bold ph-check text-lg"></i>' : 'Мало'}</div></div>`).join('')}</div><div class="mt-auto pt-4 border-t border-slate-200"><div class="flex justify-between text-sm text-slate-600 mb-1"><span>Себестоимость 1 шт:</span> <span class="font-medium">${formatMoney(costPerSet)}</span></div><div class="flex justify-between text-lg font-bold text-slate-800"><span>Итого к списанию:</span> <span>${formatMoney(costPerSet * qty)}</span></div></div></div>`;
+            btn.disabled = !canBuild; btn.className = `w-full py-4 rounded-xl font-bold text-lg shadow-sm transition-all mt-4 flex justify-center items-center gap-2 ${canBuild ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`;
+        }
+
+        function doBuild() {
+            const setObj = data.sets.find(s => s.id === document.getElementById('build-set').value), qty = Math.max(1, Math.floor(parseNum(document.getElementById('build-qty').value)));
+            const availability = checkAvailability(setObj, qty); if (!setObj || !availability.every(i => i.isOk)) return showToast('Невозможно собрать!');
+            let snapshots = [];
+            for (const req of availability) {
+                const pIndex = data.parts.findIndex(p => p.id === req.part.id);
+                if (pIndex > -1) {
+                    const p = data.parts[pIndex], oldStock = parseNum(p.stock), oldValue = parseNum(p.value), newStock = Math.max(0, oldStock - req.needed), newValue = oldStock > 0 ? oldValue * (newStock / oldStock) : 0, unitCost = getUnitCost(p);
+                    snapshots.push({ partId: p.id, partName: p.name, unit: p.unit || 'шт.', qtyPerSet: req.needed / qty, qtyTotal: req.needed, unitCost: unitCost, lineCost: req.needed * unitCost });
+                    data.parts[pIndex] = { ...p, stock: newStock, value: newValue, cost: newStock > 0 ? newValue / newStock : unitCost };
+                }
+            }
+            const actualUnitCost = snapshots.reduce((sum, s) => sum + s.qtyPerSet * s.unitCost, 0);
+            data.history.unshift({ id: generateId(), type: 'build', date: document.getElementById('build-date').value || getToday(), setId: setObj.id, setName: setObj.name, qty: qty, unitCost: actualUnitCost, total: actualUnitCost * qty, snapshots, createdAt: new Date().toISOString() });
+            saveData(); renderBuilds(); showToast('Успешно собрано!');
+        }
+
+        function renderHistory() {
+            const filtered = data.history.filter(h => historyFilter === 'all' || h.type === historyFilter).sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+            document.getElementById('tab-history').innerHTML = `
+                <div class="space-y-4 max-w-4xl mx-auto">
+                    <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                        ${[{ id: 'all', label: 'Все операции' }, { id: 'purchase', label: 'Закупки' }, { id: 'build', label: 'Сборки' }].map(f => `<button onclick="historyFilter='${f.id}';renderHistory()" class="px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${historyFilter === f.id ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}">${f.label}</button>`).join('')}
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                        ${filtered.length === 0 ? `<div class="py-12 text-center text-slate-500">История пуста.</div>` : `<div class="divide-y divide-slate-100">${filtered.map(item => {
+                            if (item.type === 'purchase') return `<div class="p-4 hover:bg-slate-50 flex flex-col sm:flex-row justify-between"><div class="flex items-start gap-4"><div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i class="ph-bold ph-trend-up text-xl"></i></div><div><div class="text-xs font-bold text-slate-400">${item.date}</div><div class="font-bold text-slate-800">Поступление: ${escapeHTML(item.partName)}</div><div class="text-sm text-slate-600">+ ${formatQty(item.qty)} по ${formatMoney(item.price)}</div></div></div><div class="text-right"><div class="font-bold text-emerald-600">+${formatMoney(item.total)}</div></div></div>`;
+                            if (item.type === 'build') return `<div class="p-4 hover:bg-slate-50 flex flex-col sm:flex-row justify-between"><div class="flex items-start gap-4"><div class="p-3 bg-orange-100 text-orange-600 rounded-xl"><i class="ph-bold ph-wrench text-xl"></i></div><div><div class="text-xs font-bold text-slate-400">${item.date}</div><div class="font-bold text-slate-800">Сборка: ${escapeHTML(item.setName)}</div><div class="text-sm text-slate-600">${formatQty(item.qty)} шт. (по ${formatMoney(item.unitCost)})</div></div></div><div class="text-right"><div class="font-bold text-orange-600">-${formatMoney(item.total)}</div></div></div>`;
+                            return '';
+                        }).join('')}</div>`}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSettings() {
+            document.getElementById('tab-settings').innerHTML = `
+                <div class="max-w-2xl mx-auto space-y-6">
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex justify-between gap-4"><div><h3 class="text-lg font-bold text-slate-800">Резервная копия</h3><p class="text-sm text-slate-500">Скачать файл JSON</p></div><button onclick="exportData()" class="bg-blue-50 text-blue-700 px-5 py-3 rounded-xl font-bold"><i class="ph-bold ph-download-simple text-xl"></i> Скачать</button></div>
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex justify-between gap-4"><div><h3 class="text-lg font-bold text-slate-800">Восстановить</h3><p class="text-sm text-slate-500">Загрузить файл JSON</p></div><label class="bg-slate-100 text-slate-700 px-5 py-3 rounded-xl font-bold cursor-pointer"><i class="ph-bold ph-upload-simple text-xl"></i> Загрузить<input type="file" accept=".json" onchange="importData(event)" class="hidden" /></label></div>
+                    <div class="bg-red-50 p-6 rounded-3xl border border-red-100 flex justify-between gap-4 mt-12"><div><h3 class="text-lg font-bold text-red-800">Сброс</h3></div><button onclick="clearAllData()" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold"><i class="ph-bold ph-trash text-xl"></i> Очистить всё</button></div>
+                </div>
+            `;
+        }
+
+        function exportData() { const blob = new Blob([JSON.stringify({ app: 'Учёт v2', data }, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup-${getToday()}.json`; a.click(); showToast('Скачано'); }
+        function importData(e) { const reader = new FileReader(); reader.onload = () => { try { const d = JSON.parse(reader.result).data || JSON.parse(reader.result); data = { parts: d.parts || [], sets: d.sets || [], history: d.history || [] }; saveData(); switchTab('home'); showToast('Восстановлено'); } catch(err) { showToast('Ошибка импорта'); } }; reader.readAsText(e.target.files[0]); e.target.value = ''; }
+        function clearAllData() { showConfirm('Очистка', 'Удалить всё?', () => { data = { parts: [], sets: [], history: [] }; saveData(); renderSettings(); showToast('Удалено'); }); }
+
+        document.addEventListener('DOMContentLoaded', () => { loadData(); switchTab('home'); });
+    </script>
+</body>
+</html>
