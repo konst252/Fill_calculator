@@ -50,6 +50,24 @@
 
     <!-- Основной контент (Контейнеры вкладок) -->
     <main class="max-w-6xl mx-auto px-4 py-6 md:py-8 w-full flex-1">
+        
+        <!-- Напоминание о бэкапе (появляется только если есть несохраненные изменения) -->
+        <div id="backup-reminder" class="hidden mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm animate-fade-in">
+            <div class="flex items-center gap-4 text-amber-900">
+                <div class="p-2 bg-amber-100 rounded-full text-amber-600 shrink-0">
+                    <i class="ph-bold ph-warning-circle text-2xl"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-base">Не забудьте сохранить копию!</div>
+                    <div class="text-sm opacity-90">Вы внесли изменения. Рекомендуем скачать свежий резервный файл.</div>
+                </div>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto shrink-0">
+                <button onclick="exportData()" class="flex-1 sm:flex-none px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2"><i class="ph-bold ph-download-simple text-lg"></i> Скачать</button>
+                <button onclick="dismissBackupReminder()" class="p-2.5 text-amber-700 hover:bg-amber-200 bg-amber-100 rounded-xl transition-colors flex items-center justify-center"><i class="ph-bold ph-x text-lg"></i></button>
+            </div>
+        </div>
+
         <section id="tab-home" class="tab-content"></section>
         <section id="tab-parts" class="tab-content hidden"></section>
         <section id="tab-purchases" class="tab-content hidden"></section>
@@ -100,7 +118,7 @@
                 <p id="confirm-message" class="text-sm text-slate-500 mb-6">Вы уверены?</p>
                 <div class="flex gap-3">
                     <button onclick="closeConfirm(false)" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors">Отмена</button>
-                    <button id="confirm-btn-yes" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-colors">Удалить</button>
+                    <button id="confirm-btn-yes" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-colors">Подтвердить</button>
                 </div>
             </div>
         </div>
@@ -113,6 +131,7 @@
         let activeTab = 'home';
         let searchQuery = '';
         let historyFilter = 'all';
+        let needsBackup = localStorage.getItem(STORAGE_KEY + '_needs_backup') === 'true';
 
         const generateId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
         const getToday = () => new Date().toISOString().slice(0, 10);
@@ -151,7 +170,25 @@
             }
         }
 
-        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+        function saveData() { 
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); 
+            setNeedsBackup(true); // Включаем напоминалку при любом сохранении
+        }
+
+        function setNeedsBackup(status) {
+            needsBackup = status;
+            localStorage.setItem(STORAGE_KEY + '_needs_backup', status);
+            const reminder = document.getElementById('backup-reminder');
+            if (status) {
+                reminder.classList.remove('hidden');
+            } else {
+                reminder.classList.add('hidden');
+            }
+        }
+
+        function dismissBackupReminder() {
+            document.getElementById('backup-reminder').classList.add('hidden');
+        }
 
         let toastTimeout;
         function showToast(message) {
@@ -588,6 +625,122 @@
             saveData(); renderBuilds(); showToast('Успешно собрано!');
         }
 
+        // ==========================================
+        // НОВЫЕ ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ ИСТОРИИ
+        // ==========================================
+        function editPurchase(id) {
+            const item = data.history.find(h => h.id === id);
+            if (!item || item.type !== 'purchase') return;
+            
+            let html = `
+                <div class="space-y-4">
+                    <div class="bg-slate-50 p-3 rounded-xl mb-2 text-sm text-slate-600">
+                        Поступление детали: <span class="font-bold text-slate-800">${escapeHTML(item.partName)}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Количество</label>
+                            <input type="number" id="ep-qty" min="0.001" step="any" value="${item.qty}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Цена за ед., ₽</label>
+                            <input type="number" id="ep-price" min="0" step="any" value="${item.price}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Дата</label>
+                        <input type="date" id="ep-date" value="${item.date}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20">
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 text-sm text-amber-800 flex items-start gap-2 mt-4">
+                        <i class="ph-bold ph-warning text-base mt-0.5 shrink-0"></i>
+                        <span>При сохранении остатки на складе и средняя себестоимость будут автоматически пересчитаны.</span>
+                    </div>
+                    <button onclick="savePurchaseEdit('${id}')" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-lg shadow-sm transition-colors mt-2">Сохранить изменения</button>
+                </div>
+            `;
+            openModal('Изменить закупку', html);
+        }
+
+        function savePurchaseEdit(id) {
+            const item = data.history.find(h => h.id === id);
+            if (!item) return;
+            const p = getPart(item.partId);
+            
+            const newQty = parseNum(document.getElementById('ep-qty').value);
+            const newPrice = parseNum(document.getElementById('ep-price').value);
+            const newDate = document.getElementById('ep-date').value;
+
+            if (newQty <= 0 || newPrice < 0 || !newDate) return showToast('Заполните данные корректно');
+
+            if (p) {
+                // Октатываем влияние старой закупки
+                let currentStock = parseNum(p.stock) - parseNum(item.qty);
+                let currentValue = parseNum(p.value) - parseNum(item.total);
+
+                // Применяем новую закупку
+                const newTotal = newQty * newPrice;
+                p.stock = Math.max(0, currentStock + newQty);
+                p.value = Math.max(0, currentValue + newTotal);
+                p.cost = p.stock > 0 ? p.value / p.stock : newPrice;
+            }
+
+            // Обновляем саму запись в истории
+            item.qty = newQty;
+            item.price = newPrice;
+            item.total = newQty * newPrice;
+            item.date = newDate;
+
+            saveData();
+            renderHistory();
+            closeModal();
+            showToast('Закупка обновлена');
+        }
+
+        function deletePurchase(id) {
+            const index = data.history.findIndex(h => h.id === id);
+            if (index === -1) return;
+            const item = data.history[index];
+
+            showConfirm('Отмена закупки', `Удалить закупку детали "${item.partName}" от ${item.date}?\nОстатки на складе уменьшатся.`, () => {
+                const p = getPart(item.partId);
+                if (p) {
+                    p.stock = Math.max(0, parseNum(p.stock) - parseNum(item.qty));
+                    p.value = Math.max(0, parseNum(p.value) - parseNum(item.total));
+                    p.cost = p.stock > 0 ? p.value / p.stock : (p.cost || 0);
+                }
+                data.history.splice(index, 1);
+                saveData();
+                renderHistory();
+                showToast('Закупка отменена');
+            });
+        }
+
+        function deleteBuild(id) {
+            const index = data.history.findIndex(h => h.id === id);
+            if (index === -1) return;
+            const item = data.history[index];
+
+            showConfirm('Отмена сборки', `Отменить сборку "${item.setName}" (${item.qty} шт) от ${item.date}?\nСписанные комплектующие вернутся на склад.`, () => {
+                if(item.snapshots) {
+                    item.snapshots.forEach(snap => {
+                        const p = getPart(snap.partId);
+                        if (p) {
+                            p.stock = parseNum(p.stock) + snap.qtyTotal;
+                            p.value = parseNum(p.value) + snap.lineCost;
+                            p.cost = p.stock > 0 ? p.value / p.stock : p.cost;
+                        }
+                    });
+                }
+                data.history.splice(index, 1);
+                saveData();
+                renderHistory();
+                showToast('Сборка отменена');
+            });
+        }
+
+        // ==========================================
+        // ОБНОВЛЕННЫЙ РЕНДЕР ИСТОРИИ
+        // ==========================================
         function renderHistory() {
             const filtered = data.history.filter(h => historyFilter === 'all' || h.type === historyFilter).sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
             document.getElementById('tab-history').innerHTML = `
@@ -597,8 +750,46 @@
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                         ${filtered.length === 0 ? `<div class="py-12 text-center text-slate-500">История пуста.</div>` : `<div class="divide-y divide-slate-100">${filtered.map(item => {
-                            if (item.type === 'purchase') return `<div class="p-4 hover:bg-slate-50 flex flex-col sm:flex-row justify-between"><div class="flex items-start gap-4"><div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i class="ph-bold ph-trend-up text-xl"></i></div><div><div class="text-xs font-bold text-slate-400">${item.date}</div><div class="font-bold text-slate-800">Поступление: ${escapeHTML(item.partName)}</div><div class="text-sm text-slate-600">+ ${formatQty(item.qty)} по ${formatMoney(item.price)}</div></div></div><div class="text-right"><div class="font-bold text-emerald-600">+${formatMoney(item.total)}</div></div></div>`;
-                            if (item.type === 'build') return `<div class="p-4 hover:bg-slate-50 flex flex-col sm:flex-row justify-between"><div class="flex items-start gap-4"><div class="p-3 bg-orange-100 text-orange-600 rounded-xl"><i class="ph-bold ph-wrench text-xl"></i></div><div><div class="text-xs font-bold text-slate-400">${item.date}</div><div class="font-bold text-slate-800">Сборка: ${escapeHTML(item.setName)}</div><div class="text-sm text-slate-600">${formatQty(item.qty)} шт. (по ${formatMoney(item.unitCost)})</div></div></div><div class="text-right"><div class="font-bold text-orange-600">-${formatMoney(item.total)}</div></div></div>`;
+                            
+                            if (item.type === 'purchase') {
+                                return `
+                                <div class="p-4 hover:bg-slate-50 flex flex-col sm:flex-row justify-between gap-4">
+                                    <div class="flex items-start gap-4">
+                                        <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl shrink-0"><i class="ph-bold ph-trend-up text-xl"></i></div>
+                                        <div>
+                                            <div class="text-xs font-bold text-slate-400">${item.date}</div>
+                                            <div class="font-bold text-slate-800">Поступление: ${escapeHTML(item.partName)}</div>
+                                            <div class="text-sm text-slate-600">+ ${formatQty(item.qty)} по ${formatMoney(item.price)}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-start sm:items-end gap-2 shrink-0">
+                                        <div class="font-bold text-emerald-600 text-lg">+${formatMoney(item.total)}</div>
+                                        <div class="flex gap-2">
+                                            <button onclick="editPurchase('${item.id}')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors"><i class="ph-bold ph-pencil-simple mr-1"></i>Изменить</button>
+                                            <button onclick="deletePurchase('${item.id}')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg transition-colors"><i class="ph-bold ph-trash mr-1"></i>Отменить</button>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            }
+                            
+                            if (item.type === 'build') {
+                                return `
+                                <div class="p-4 hover:bg-slate-50 flex flex-col sm:flex-row justify-between gap-4">
+                                    <div class="flex items-start gap-4">
+                                        <div class="p-3 bg-orange-100 text-orange-600 rounded-xl shrink-0"><i class="ph-bold ph-wrench text-xl"></i></div>
+                                        <div>
+                                            <div class="text-xs font-bold text-slate-400">${item.date}</div>
+                                            <div class="font-bold text-slate-800">Сборка: ${escapeHTML(item.setName)}</div>
+                                            <div class="text-sm text-slate-600">${formatQty(item.qty)} шт. (по ${formatMoney(item.unitCost)})</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-start sm:items-end gap-2 shrink-0">
+                                        <div class="font-bold text-orange-600 text-lg">-${formatMoney(item.total)}</div>
+                                        <button onclick="deleteBuild('${item.id}')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg transition-colors"><i class="ph-bold ph-trash mr-1"></i>Отменить сборку</button>
+                                    </div>
+                                </div>`;
+                            }
+
                             return '';
                         }).join('')}</div>`}
                     </div>
@@ -616,11 +807,15 @@
             `;
         }
 
-        function exportData() { const blob = new Blob([JSON.stringify({ app: 'Учёт v2', data }, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup-${getToday()}.json`; a.click(); showToast('Скачано'); }
-        function importData(e) { const reader = new FileReader(); reader.onload = () => { try { const d = JSON.parse(reader.result).data || JSON.parse(reader.result); data = { parts: d.parts || [], sets: d.sets || [], history: d.history || [] }; saveData(); switchTab('home'); showToast('Восстановлено'); } catch(err) { showToast('Ошибка импорта'); } }; reader.readAsText(e.target.files[0]); e.target.value = ''; }
-        function clearAllData() { showConfirm('Очистка', 'Удалить всё?', () => { data = { parts: [], sets: [], history: [] }; saveData(); renderSettings(); showToast('Удалено'); }); }
+        function exportData() { const blob = new Blob([JSON.stringify({ app: 'Учёт v2', data }, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup-${getToday()}.json`; a.click(); showToast('Скачано'); setNeedsBackup(false); }
+        function importData(e) { const reader = new FileReader(); reader.onload = () => { try { const d = JSON.parse(reader.result).data || JSON.parse(reader.result); data = { parts: d.parts || [], sets: d.sets || [], history: d.history || [] }; saveData(); switchTab('home'); showToast('Восстановлено'); setNeedsBackup(false); } catch(err) { showToast('Ошибка импорта'); } }; reader.readAsText(e.target.files[0]); e.target.value = ''; }
+        function clearAllData() { showConfirm('Очистка', 'Удалить всё?', () => { data = { parts: [], sets: [], history: [] }; saveData(); renderSettings(); showToast('Удалено'); setNeedsBackup(false); }); }
 
-        document.addEventListener('DOMContentLoaded', () => { loadData(); switchTab('home'); });
+        document.addEventListener('DOMContentLoaded', () => { 
+            loadData(); 
+            switchTab('home'); 
+            if (needsBackup) setNeedsBackup(true); 
+        });
     </script>
 </body>
 </html>
